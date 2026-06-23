@@ -1,0 +1,1161 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EduBrillante | Sistema de Gestión Académica 2026</title>
+  <style>
+    :root {
+      --primary: #0ea5e9;
+      --secondary: #10b981;
+      --dark: #0f172a;
+      --light: #f8fafc;
+      --border: #e2e8f0;
+      --text: #1e293b;
+      --accent: #f59e0b;
+      --white: #ffffff;
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
+
+    body { background-color: var(--light); color: var(--text); overflow-y: auto; min-height: 100vh; position: relative; }
+
+    /* --- PORTADA INICIAL (PASAPORTADA) --- */
+    #hero {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      color: var(--white);
+      text-align: center;
+      transition: opacity 0.6s ease;
+    }
+
+    .logo-container {
+      background: var(--white);
+      width: 110px; height: 110px;
+      border-radius: 24px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 25px;
+      box-shadow: 0 0 40px rgba(14, 165, 233, 0.4);
+    }
+
+    .logo-symbol { font-size: 55px; font-weight: 900; color: var(--primary); }
+
+    #hero h1 { font-size: 3.8rem; margin-bottom: 10px; letter-spacing: -2px; }
+    #hero p { font-size: 1.2rem; color: #94a3b8; max-width: 500px; margin-bottom: 45px; }
+
+    .btn-enter {
+      padding: 20px 50px;
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--white);
+      background: var(--primary);
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: var(--transition);
+      box-shadow: 0 10px 25px rgba(14, 165, 233, 0.3);
+    }
+
+    .btn-enter:hover { transform: scale(1.05); background: #0284c7; box-shadow: 0 15px 30px rgba(14, 165, 233, 0.4); }
+
+    /* --- CONTENEDOR PRINCIPAL --- */
+    #app { display: none; opacity: 0; transition: opacity 0.5s ease; min-height: 100vh; flex-direction: column; }
+
+    header {
+      background: var(--white);
+      padding: 15px 45px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+    }
+
+    .brand-area { 
+      display: flex; 
+      align-items: center; 
+      gap: 12px; 
+      cursor: pointer; 
+      transition: var(--transition);
+    }
+    .brand-area:hover { transform: translateX(5px); opacity: 0.8; }
+
+    .mini-logo { background: var(--primary); color: white; padding: 6px 12px; border-radius: 10px; font-weight: 900; }
+
+    .user-info-bar { display: flex; align-items: center; gap: 20px; }
+    .user-profile { text-align: right; }
+    .user-profile b { display: block; font-size: 0.9rem; }
+    .btn-logout { 
+      font-size: 0.75rem; 
+      color: #ef4444; 
+      cursor: pointer; 
+      text-decoration: underline; 
+      border: none; 
+      background: none; 
+      font-weight: 700;
+    }
+
+    .main-wrapper {
+      display: flex;
+      flex: 1;
+      padding: 25px;
+      gap: 25px;
+    }
+
+    /* --- TARJETAS DE ACCESO Y AUTENTICACIÓN --- */
+    .auth-card {
+      margin: auto;
+      background: var(--white);
+      padding: 40px;
+      border-radius: 30px;
+      width: 100%;
+      max-width: 500px;
+      box-shadow: var(--shadow-lg);
+      text-align: center;
+    }
+
+    .role-grid { display: grid; gap: 12px; margin: 20px 0; }
+    .role-option {
+      border: 2px solid var(--border);
+      padding: 15px;
+      border-radius: 15px;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      text-align: left;
+    }
+    .role-option:hover { border-color: var(--primary); background: #f0f9ff; }
+    .role-option.selected { border-color: var(--primary); background: #f0f9ff; box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.1); }
+    .role-icon { font-size: 28px; }
+
+    /* --- SIDEBAR --- */
+    nav {
+      width: 320px;
+      background: var(--white);
+      border-radius: 25px;
+      padding: 25px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow-lg);
+      height: fit-content;
+    }
+
+    .nav-label { font-size: 0.7rem; color: #94a3b8; font-weight: 800; text-transform: uppercase; margin-bottom: 20px; letter-spacing: 1px; }
+
+    .nav-btn {
+      width: 100%;
+      text-align: left;
+      padding: 15px 20px;
+      margin-bottom: 10px;
+      border: none;
+      background: #f8fafc;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 700;
+      color: var(--text);
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .nav-btn:hover { background: #f1f5f9; color: var(--primary); }
+    .nav-btn.active { background: var(--primary); color: var(--white); box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3); }
+
+    /* --- ÁREA DE CONTENIDO --- */
+    main {
+      flex: 1;
+      background: var(--white);
+      border-radius: 25px;
+      padding: 40px;
+      box-shadow: var(--shadow-lg);
+    }
+
+    h2 { font-size: 1.8rem; margin-bottom: 25px; color: var(--dark); display: flex; align-items: center; gap: 10px; }
+    h3 { font-size: 1.3rem; margin: 20px 0 15px 0; color: #334155; border-left: 4px solid var(--primary); padding-left: 10px; }
+
+    /* --- TABLAS DE DATOS --- */
+    .data-table-wrapper { overflow-x: auto; margin-top: 10px; margin-bottom: 20px; border-radius: 12px; border: 1px solid var(--border); }
+    .data-table { width: 100%; border-collapse: collapse; }
+    .data-table th { background: #f8fafc; text-align: left; padding: 18px; border-bottom: 2px solid var(--border); font-size: 0.8rem; color: #64748b; text-transform: uppercase; }
+    .data-table td { padding: 18px; border-bottom: 1px solid var(--border); font-size: 0.95rem; }
+    .data-table tr:last-child td { border-bottom: none; }
+
+    /* --- FORMULARIOS --- */
+    .form-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .full-row { grid-column: span 2; }
+    
+    .form-group-block { margin-bottom: 15px; text-align: left; }
+    .form-group-block label { display: block; margin-bottom: 6px; font-weight: 700; font-size: 0.85rem; color: #475569; }
+    .form-group-block input, .form-group-block select, .form-group-block textarea {
+      width: 100%; padding: 14px; border: 1.5px solid var(--border); border-radius: 12px; outline: none; transition: var(--transition); font-size: 0.95rem;
+    }
+    .form-group-block input:focus, .form-group-block select:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.1); }
+
+    .btn-submit {
+      width: 100%; padding: 16px; background: var(--primary); color: white;
+      border: none; border-radius: 12px; font-weight: 800; cursor: pointer; margin-top: 15px; transition: var(--transition);
+    }
+    .btn-submit:hover { background: #0284c7; transform: translateY(-2px); }
+
+    .register-footer-container {
+      margin-top: 20px;
+      padding-top: 15px;
+      border-top: 1.5px dashed var(--border);
+      font-size: 0.9rem;
+      color: #64748b;
+    }
+
+    .btn-link-register {
+      background: none;
+      border: none;
+      color: var(--primary);
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: underline;
+      font-size: 0.9rem;
+      transition: var(--transition);
+    }
+    .btn-link-register:hover { color: #0284c7; }
+
+    /* --- COMPONENTES ESPECIALES --- */
+    .card-payment {
+      background: linear-gradient(135deg, #0f172a 0%, #334155 100%);
+      color: white;
+      padding: 40px;
+      border-radius: 20px;
+      margin-bottom: 30px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+      text-align: center;
+    }
+
+    .status-badge { padding: 6px 12px; border-radius: 8px; font-size: 0.75rem; font-weight: 800; display: inline-block; }
+    .status-justified { background: #dcfce7; color: #166534; }
+    .status-absent { background: #fee2e2; color: #991b1b; }
+    .status-warning { background: #fef3c7; color: #92400e; }
+
+    .stat-box {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+    .stat-item {
+      padding: 20px; border-radius: 20px; border: 1px solid var(--border);
+      cursor: pointer; transition: var(--transition); text-align: center;
+    }
+    .stat-item:hover { transform: translateY(-5px); border-color: var(--primary); box-shadow: var(--shadow-lg); }
+    .stat-item h4 { font-size: 0.7rem; color: #64748b; margin-bottom: 10px; text-transform: uppercase; }
+    .stat-item p { font-size: 1.5rem; font-weight: 900; color: var(--dark); }
+
+    .avatar-animado {
+        font-size: 44px;
+        animation: swing 2s ease-in-out infinite;
+        display: inline-block;
+    }
+    @keyframes swing {
+        0%, 100% { transform: rotate(-5deg); }
+        50% { transform: rotate(5deg); }
+    }
+
+    .email-notification-box {
+      margin-top: 25px; padding: 20px; border-radius: 15px; background: #fff; border-left: 5px solid var(--secondary); box-shadow: var(--shadow-lg);
+    }
+
+    /* ESTILOS BOTONES DE ASISTENCIA */
+    .btn-att { padding: 6px 12px; border: 1.5px solid var(--border); background: #fff; font-size: 0.8rem; font-weight: 700; border-radius: 8px; cursor: pointer; transition: var(--transition); margin-right: 4px; }
+    .btn-att.active-p { background: #10b981; color: #fff; border-color: #10b981; }
+    .btn-att.active-t { background: #f59e0b; color: #fff; border-color: #f59e0b; }
+    .btn-att.active-a { background: #ef4444; color: #fff; border-color: #ef4444; }
+
+    /* --- BOTÓN FLOTANTE DE INSTAGRAM --- */
+    .instagram-floating-btn {
+      position: fixed;
+      bottom: 25px;
+      right: 25px;
+      background: #ffffff;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+      z-index: 99999;
+      transition: var(--transition);
+      border: 1px solid var(--border);
+    }
+    .instagram-floating-btn:hover {
+      transform: scale(1.1) rotate(5deg);
+      box-shadow: 0 8px 25px rgba(225, 48, 108, 0.3);
+      background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+    }
+    .instagram-floating-btn svg {
+      width: 28px;
+      height: 28px;
+      fill: #475569;
+      transition: var(--transition);
+    }
+    .instagram-floating-btn:hover svg {
+      fill: #ffffff;
+    }
+
+    @media (max-width: 900px) {
+      header { padding: 15px 20px; flex-direction: column; gap: 10px; text-align: center; }
+      .main-wrapper { flex-direction: column; padding: 15px; }
+      nav { width: 100%; padding: 15px; border-radius: 20px; }
+      #nav-list { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+      .nav-btn { margin-bottom: 0; font-size: 0.8rem; padding: 12px; }
+      main { padding: 20px; border-radius: 20px; width: 100%; min-height: 500px; }
+      .stat-box { grid-template-columns: 1fr 1fr; }
+      .form-container { grid-template-columns: 1fr; }
+      .full-row { grid-column: span 1; }
+      .instagram-floating-btn { bottom: 15px; right: 15px; width: 48px; height: 48px; }
+      .instagram-floating-btn svg { width: 24px; height: 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <section id="hero">
+    <div class="logo-container">
+      <span class="logo-symbol">E</span>
+    </div>
+    <h1>EduBrillante</h1>
+    <p>La plataforma educativa más avanzada para el ciclo lectivo 2026. Gestión, pagos y seguimiento en un solo lugar.</p>
+    <button class="btn-enter" onclick="startApp()">Entrar al Portal</button>
+  </section>
+
+  <div id="app">
+    <header>
+      <div class="brand-area" onclick="goBackToHero()">
+        <div class="mini-logo">EB</div>
+        <h2 style="margin-bottom:0; font-size: 1.4rem; color: var(--primary)">EduBrillante</h2>
+      </div>
+      <div id="top-nav-user" style="display:none;">
+        <div class="user-info-bar">
+          <div class="user-profile">
+            <b id="user-display-name"></b>
+            <button class="btn-logout" onclick="logoutSession()">Cerrar Sesión</button>
+          </div>
+          <div id="user-avatar-box" style="width: 55px; height: 55px; border-radius: 50%; background: #f1f5f9; display: flex; justify-content: center; align-items: center; border: 2px solid var(--border);"></div>
+        </div>
+      </div>
+    </header>
+
+    <div class="main-wrapper">
+      
+      <section id="login-section" class="auth-card">
+        <h3>Bienvenido al Portal</h3>
+        <p style="color: #64748b; margin-top: 5px;">Seleccione su perfil de usuario para continuar</p>
+        
+        <div class="role-grid">
+          <div class="role-option" id="role-est" onclick="selectRole('estudiante')">
+            <div class="role-icon">🎓</div>
+            <div>
+              <p style="font-weight: 800;">Portal del Estudiante</p>
+              <p style="font-size: 0.75rem; color: #64748b;">Consulta de notas, tareas y registro personal.</p>
+            </div>
+          </div>
+          
+          <div class="role-option" id="role-pad" onclick="selectRole('padre')">
+            <div class="role-icon">👥</div>
+            <div>
+              <p style="font-weight: 800;">Portal de Padres de Familia</p>
+              <p style="font-size: 0.75rem; color: #64748b;">Matrícula, pagos administrativos y reportes.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group-block">
+          <label>Correo Institucional</label>
+          <input type="text" id="user-email" placeholder="nombre@edubrillante.edu.pa">
+          <span style="font-size:0.75rem; color:#94a3b8; display:block; margin-top:5px;">Pruebas: juan.perez@edubrillante.edu.pa o roberto.perez@edubrillante.edu.pa</span>
+        </div>
+
+        <button class="btn-submit" onclick="loginAction()">Acceder al Sistema</button>
+        
+        <div class="register-footer-container">
+          ¿No tienes un usuario? <button class="btn-link-register" onclick="showRegistrationFlow('selector')">Créalo aquí</button>
+        </div>
+      </section>
+
+      <section id="signup-selector-section" class="auth-card" style="display: none;">
+        <h3>¿Qué tipo de cuenta deseas crear?</h3>
+        <p style="color: #64748b; margin-top: 5px;">Cada perfil dispone de un formulario de registro independiente.</p>
+        
+        <div class="role-grid">
+          <div class="role-option" onclick="showRegistrationFlow('estudiante')">
+            <div class="role-icon">🎓</div>
+            <div>
+              <p style="font-weight: 800; color: var(--primary);">Soy Estudiante / Alumna</p>
+              <p style="font-size: 0.75rem; color: #64748b;">Para el seguimiento de calificaciones del primer trimestre y tareas.</p>
+            </div>
+          </div>
+          
+          <div class="role-option" onclick="showRegistrationFlow('padre')">
+            <div class="role-icon">👥</div>
+            <div>
+              <p style="font-weight: 800; color: var(--secondary);">Soy Padre de Familia o Tutor</p>
+              <p style="font-size: 0.75rem; color: #64748b;">Para la inscripción de matrículas, pasarela de mensualidades y verificación.</p>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn-link-register" style="margin-top: 10px;" onclick="showRegistrationFlow('login')">Volver al Inicio de Sesión</button>
+      </section>
+
+      <section id="signup-student-section" class="auth-card" style="display: none;">
+        <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 5px;">
+          <span style="font-size: 24px;">🎓</span>
+          <h3 style="margin:0; border:none; padding:0;">Registro de Estudiantes</h3>
+        </div>
+        <p style="color: #64748b; margin-bottom: 20px;">Crea tus credenciales de acceso para la consulta académica</p>
+        
+        <div class="form-group-block">
+          <label>Nombre Completo del Estudiante</label>
+          <input type="text" id="sign-est-name" placeholder="Ej. Ana María Torres">
+        </div>
+        <div class="form-group-block">
+          <label>Asignar Correo Institucional</label>
+          <input type="text" id="sign-est-email" placeholder="ana.torres@edubrillante.edu.pa">
+        </div>
+        <div class="form-group-block">
+          <label>Cédula de Identidad del Alumno</label>
+          <input type="text" id="sign-est-id" placeholder="Ej. 8-XXX-XXXX">
+        </div>
+
+        <button class="btn-submit" onclick="executeSignup('estudiante')">Registrar Perfil de Alumno</button>
+        <button class="btn-link-register" style="margin-top: 15px; display: block; width: 100%;" onclick="showRegistrationFlow('selector')">⬅ Volver atrás</button>
+      </section>
+
+      <section id="signup-parent-section" class="auth-card" style="display: none;">
+        <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 5px;">
+          <span style="font-size: 24px;">👥</span>
+          <h3 style="margin:0; border:none; padding:0;">Registro de Padres de Familia</h3>
+        </div>
+        <p style="color: #64748b; margin-bottom: 15px;">Completa tu registro administrativo para vincular a tus estudiantes e ir al pago</p>
+        
+        <div class="form-group-block">
+          <label>Nombre Completo del Padre/Acudiente</label>
+          <input type="text" id="sign-pad-name" placeholder="Ej. Carlos Torres">
+        </div>
+        <div class="form-group-block">
+          <label>Cédula del Padre/Acudiente</label>
+          <input type="text" id="sign-pad-id" placeholder="Ej. 8-XXX-XXXX">
+        </div>
+        <div class="form-group-block">
+          <label>Parentesco / Relación</label>
+          <select id="sign-pad-relation">
+            <option value="Padre">Padre</option>
+            <option value="Madre">Madre</option>
+            <option value="Tutor Legal">Tutor Legal / Encargado</option>
+          </select>
+        </div>
+        <div class="form-group-block">
+          <label>Correo Electrónico de Contacto</label>
+          <input type="text" id="sign-pad-email" placeholder="carlos.torres@mail.com">
+        </div>
+        <div class="form-group-block">
+          <label>Teléfono Celular / WhatsApp</label>
+          <input type="text" id="sign-pad-phone" placeholder="Ej. +507 6666-6666">
+        </div>
+        <div class="form-group-block">
+          <label>Seleccionar Estudiante Vinculado (Ya Registrado)</label>
+          <select id="sign-pad-student-select">
+            <!-- Se poblará dinámicamente con los alumnos de la base de datos -->
+          </select>
+        </div>
+
+        <button class="btn-submit" style="background-color: var(--secondary);" onclick="executeSignup('padre')">Registrar e Ir a Pagar Mensualidad 💳</button>
+        <button class="btn-link-register" style="margin-top: 15px; display: block; width: 100%;" onclick="showRegistrationFlow('selector')">⬅ Volver atrás</button>
+      </section>
+
+      <nav id="sidebar" style="display: none;">
+        <p class="nav-label">Gestión Académica</p>
+        <div id="nav-list"></div>
+      </nav>
+
+      <main id="main-content" style="display: none;">
+      </main>
+
+    </div>
+  </div>
+
+  <!-- ENLACE FLOTANTE CON LOGO DE INSTAGRAM -->
+  <a href="https://www.instagram.com/infortvorteduca_ive/" target="_blank" rel="noopener noreferrer" class="instagram-floating-btn" title="Visítanos en Instagram">
+    <svg viewBox="0 0 24 24">
+      <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.051.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/>
+    </svg>
+  </a>
+
+<script>
+  const AVATARES_ESTUDIANTES = ['👦🏻', '👧🏻', '🧑🏼‍💻', '👩🏽‍💻', '🎒'];
+  const AVATARES_ADULTOS = ['👨🏻‍💼', '👩🏻‍💼', '👨🏽‍🏫', '👩🏼‍🏫', '🕵🏻‍♂️'];
+
+  // Repositorio de semanas para el módulo de tareas
+  const SEMANAS_TAREAS = {
+    1: [
+      { fecha: "24/06/2026", materia: "Programación Web III", desc: "Estructuras avanzadas y maquetación responsiva utilizando reglas de CSS Grid." },
+      { fecha: "29/06/2026", materia: "Cálculo Matemático", desc: "Resolución de límites y derivadas por definición incremental." }
+    ],
+    2: [
+      { fecha: "02/07/2026", materia: "Física Aplicada", desc: "Laboratorio sobre vectores y diagramas de cuerpo libre en planos inclinados." },
+      { fecha: "05/07/2026", materia: "Programación Web III", desc: "Integración de LocalStorage para la persistencia del estado en JavaScript." }
+    ],
+    3: [
+      { fecha: "09/07/2026", materia: "Cálculo Matemático", desc: "Taller grupal evaluado: Derivadas de funciones trigonométricas complejas." },
+      { fecha: "12/07/2026", materia: "Física Aplicada", desc: "Investigación sobre la application de las leyes de la termodinámica en motores eficientes." }
+    ]
+  };
+  let semanaSeleccionada = 1;
+
+  // Base de asistencia inicial por días para el II Trimestre
+  const DIAS_ASISTENCIA = [
+    { dia: "Lunes 15/06", estado: "Asistió" },
+    { dia: "Martes 16/06", estado: "Asistió" },
+    { dia: "Miércoles 17/06", estado: "Asistió" },
+    { dia: "Jueves 18/06", estado: "Tardanza" },
+    { dia: "Viernes 19/06", estado: "Ausencia" },
+    { dia: "Lunes 22/06", estado: "Asistió" },
+    { dia: "Martes 23/06", estado: "Pendiente" }
+  ];
+
+  const SEED_DATA = {
+    usuarios: [
+      { email: "juan.perez@edubrillante.edu.pa", role: "estudiante", name: "Juan David Pérez", isNew: false, avatar: "👦🏻" },
+      { email: "roberto.perez@edubrillante.edu.pa", role: "padre", name: "Ing. Roberto Pérez", isNew: false, avatar: "👨🏻‍💼" }
+    ],
+    estudiantes: [
+      { cedula: "8-999-1234", name: "Juan David Pérez", fechaNac: "2008-05-15", nacionalidad: "Panameña", direccion: "La Chorrera, Panamá Oeste", telefono: "+507 6666-0000", sangre: "O+", allergies: "Ninguna", emailEstudiante: "juan.perez@edubrillante.edu.pa", emailResponsable: "roberto.perez@edubrillante.edu.pa", pagoRealizado: true, montoPago: "60.00" }
+    ],
+    tareas_formato: [
+      { materia: "Cálculo Matemático", profesor: "Prof. Armando Flores", tipo: "Tarea", titulo: "Proyecto de Cálculo Diferencial", estado: "Pendiente" },
+      { materia: "Física Aplicada", profesor: "Dra. Elena Gómez", tipo: "Taller", titulo: "Taller de Energía Cinética", estado: "Pendiente" },
+      { materia: "Programación Web III", profesor: "Ing. Reinaldo Castillo", tipo: "Proyecto", titulo: "Maquetación Avanzada Flexbox/Grid", estado: "Pendiente" }
+    ]
+  };
+
+  if (!localStorage.getItem("edubrillante_db")) {
+    localStorage.setItem("edubrillante_db", JSON.stringify(SEED_DATA));
+  }
+
+  function getDB() { return JSON.parse(localStorage.getItem("edubrillante_db")); }
+  function saveDB(data) { localStorage.setItem("edubrillante_db", JSON.stringify(data)); }
+
+  let session = { role: "", name: "", email: "", isNew: false, avatar: "👤" };
+
+  function startApp() {
+    document.getElementById('hero').style.opacity = '0';
+    setTimeout(() => {
+      document.getElementById('hero').style.display = 'none';
+      const app = document.getElementById('app');
+      app.style.display = 'flex';
+      setTimeout(() => app.style.opacity = '1', 50);
+    }, 600);
+  }
+
+  function goBackToHero() {
+    document.getElementById('app').style.opacity = '0';
+    setTimeout(() => {
+      document.getElementById('app').style.display = 'none';
+      document.getElementById('hero').style.display = 'flex';
+      setTimeout(() => document.getElementById('hero').style.opacity = '1', 50);
+      logoutSession();
+    }, 500);
+  }
+
+  function showRegistrationFlow(target) {
+    document.getElementById('login-section').style.display = 'none';
+    document.getElementById('signup-selector-section').style.display = 'none';
+    document.getElementById('signup-student-section').style.display = 'none';
+    document.getElementById('signup-parent-section').style.display = 'none';
+
+    if (target === 'login') {
+      document.getElementById('login-section').style.display = 'block';
+    } else if (target === 'selector') {
+      document.getElementById('signup-selector-section').style.display = 'block';
+    } else if (target === 'estudiante') {
+      document.getElementById('signup-student-section').style.display = 'block';
+    } else if (target === 'padre') {
+      poblarSelectorEstudiantes();
+      document.getElementById('signup-parent-section').style.display = 'block';
+    }
+  }
+
+  function poblarSelectorEstudiantes() {
+    const db = getDB();
+    const select = document.getElementById("sign-pad-student-select");
+    select.innerHTML = "";
+    if(!db.estudiantes || db.estudiantes.length === 0) {
+      select.innerHTML = `<option value="nuevo">Crear nuevo registro temporal</option>`;
+      return;
+    }
+    db.estudiantes.forEach(e => {
+      select.innerHTML += `<option value="${e.cedula}">${e.name} (Cédula: ${e.cedula})</option>`;
+    });
+  }
+
+  function selectRole(r) {
+    session.role = r;
+    document.querySelectorAll('#login-section .role-option').forEach(el => el.classList.remove('selected'));
+    document.getElementById(r === 'estudiante' ? 'role-est' : 'role-pad').classList.add('selected');
+  }
+
+  function loginAction() {
+    if(!session.role) return alert("Por favor seleccione un perfil de ingreso.");
+    
+    const emailInput = document.getElementById("user-email").value.trim().toLowerCase();
+    if(!emailInput) return alert("Por favor ingrese su correo institucional.");
+
+    const db = getDB();
+    const userMatch = db.usuarios.find(u => u.email === emailInput && u.role === session.role);
+
+    if (!userMatch) {
+      return alert("El correo electrónico no está registrado para este perfil.");
+    }
+
+    session.name = userMatch.name;
+    session.email = userMatch.email;
+    session.isNew = userMatch.isNew || false;
+    session.avatar = userMatch.avatar || (session.role === 'estudiante' ? '👦' : '👨‍💼');
+    
+    enterDashboard();
+  }
+
+  function executeSignup(targetRole) {
+    let name = "", email = "", extraField = "";
+    
+    if(targetRole === 'estudiante') {
+      name = document.getElementById("sign-est-name").value.trim();
+      email = document.getElementById("sign-est-email").value.trim().toLowerCase();
+      extraField = document.getElementById("sign-est-id").value.trim();
+      if(!name || !email || !extraField) return alert("Por favor rellene todos los campos del estudiante.");
+    } else {
+      name = document.getElementById("sign-pad-name").value.trim();
+      email = document.getElementById("sign-pad-email").value.trim().toLowerCase();
+      extraField = document.getElementById("sign-pad-phone").value.trim();
+      const padId = document.getElementById("sign-pad-id").value.trim();
+      if(!name || !email || !extraField || !padId) return alert("Por favor rellene todos los campos del formulario de acudiente.");
+    }
+
+    let db = getDB();
+    if(db.usuarios.some(u => u.email === email)) return alert("El correo ya se encuentra dado de alta en la plataforma.");
+
+    let avatarAleatorio = "";
+    if(targetRole === 'estudiante') {
+      avatarAleatorio = AVATARES_ESTUDIANTES[Math.floor(Math.random() * AVATARES_ESTUDIANTES.length)];
+    } else {
+      avatarAleatorio = AVATARES_ADULTOS[Math.floor(Math.random() * AVATARES_ADULTOS.length)];
+    }
+
+    db.usuarios.push({
+      email: email,
+      role: targetRole,
+      name: name,
+      isNew: true,
+      avatar: avatarAleatorio
+    });
+    
+    if(targetRole === 'estudiante') {
+      db.estudiantes.push({
+        cedula: extraField, name: name, fechaNac: "", nacionalidad: "Panameña", direccion: "La Chorrera, Panamá Oeste", telefono: "", sangre: "O+", allergies: "", emailEstudiante: email, emailResponsable: "", pagoRealizado: false, montoPago: "60.00"
+      });
+    } else {
+      const cedulaSeleccionada = document.getElementById("sign-pad-student-select").value;
+      let estEncontrado = db.estudiantes.find(e => e.cedula === cedulaSeleccionada);
+      if(estEncontrado) {
+        estEncontrado.emailResponsable = email;
+      } else {
+        db.estudiantes.push({
+          cedula: "8-REG-" + Math.floor(1000+Math.random()*9000), name: "Estudiante Vinculado Directo", fechaNac: "", nacionalidad: "Panameña", direccion: "La Chorrera, Panamá Oeste", telefono: extraField, sangre: "A+", allergies: "", emailEstudiante: "hijo."+email, emailResponsable: email, pagoRealizado: false, montoPago: "60.00"
+        });
+      }
+    }
+    saveDB(db);
+
+    alert("¡Registro de cuenta completado con éxito!");
+
+    session.role = targetRole;
+    session.name = name;
+    session.email = email;
+    session.isNew = true;
+    session.avatar = avatarAleatorio;
+
+    document.getElementById("sign-est-name").value = "";
+    document.getElementById("sign-est-email").value = "";
+    document.getElementById("sign-est-id").value = "";
+    document.getElementById("sign-pad-name").value = "";
+    document.getElementById("sign-pad-id").value = "";
+    document.getElementById("sign-pad-email").value = "";
+    document.getElementById("sign-pad-phone").value = "";
+
+    document.getElementById('user-avatar-box').innerHTML = `<span class="avatar-animado">${session.avatar}</span>`;
+    document.getElementById('sidebar').style.display = 'flex';
+    document.getElementById('main-content').style.display = 'block';
+    document.getElementById('top-nav-user').style.display = 'block';
+    document.getElementById('user-display-name').innerText = session.name;
+    
+    buildMenu();
+
+    if(targetRole === 'padre') {
+      loadModule('pago');
+    } else {
+      loadModule('notes_tracker');
+    }
+  }
+
+  function enterDashboard() {
+    document.getElementById('login-section').style.display = 'none';
+    document.getElementById('signup-selector-section').style.display = 'none';
+    document.getElementById('signup-student-section').style.display = 'none';
+    document.getElementById('signup-parent-section').style.display = 'none';
+
+    document.getElementById('user-avatar-box').innerHTML = `<span class="avatar-animado">${session.avatar}</span>`;
+    document.getElementById('sidebar').style.display = 'flex';
+    document.getElementById('main-content').style.display = 'block';
+    document.getElementById('top-nav-user').style.display = 'block';
+    document.getElementById('user-display-name').innerText = session.name;
+    
+    buildMenu();
+    loadModule(session.role === 'estudiante' ? 'notes_tracker' : 'matricula');
+  }
+
+  function logoutSession() {
+    session = { role: "", name: "", email: "", isNew: false, avatar: "👤" };
+    document.getElementById("user-email").value = "";
+    document.getElementById('sidebar').style.display = 'none';
+    document.getElementById('main-content').style.display = 'none';
+    document.getElementById('top-nav-user').style.display = 'none';
+    document.getElementById('login-section').style.display = 'block';
+    document.querySelectorAll('.role-option').forEach(el => el.classList.remove('selected'));
+  }
+
+  function buildMenu() {
+    const list = document.getElementById('nav-list');
+    list.innerHTML = '';
+    
+    const items = session.role === 'estudiante' ? [
+      { id: 'notes_tracker', label: 'Mis Calificaciones', icon: '📝' },
+      { id: 'asistencia_view', label: 'Control de Asistencias', icon: '⏰' },
+      { id: 'tareas', label: 'Actividades y Tareas', icon: '📅' },
+      { id: 'entrega_formato', label: 'Formato de Entrega', icon: '📤' }
+    ] : [
+      { id: 'matricula', label: 'Formulario de Matrícula', icon: '📋' },
+      { id: 'notes_tracker_admin', label: 'Notas por Materia', icon: '📊' },
+      { id: 'asistencia_view', label: 'Asistencia General', icon: '⏰' },
+      { id: 'pago', label: 'Pago de Mensualidad', icon: '💳' },
+      { id: 'verificar_registros', label: 'Registros y Alumnos', icon: '🔍' }
+    ];
+
+    items.forEach(item => {
+      const btn = document.createElement('button');
+      btn.className = 'nav-btn';
+      btn.id = 'btn-' + item.id;
+      btn.innerHTML = `<span>${item.icon}</span> ${item.label}`;
+      btn.onclick = () => loadModule(item.id);
+      list.appendChild(btn);
+    });
+  }
+
+  function cambiarAsistencia(index, nuevoEstado) {
+    DIAS_ASISTENCIA[index].estado = nuevoEstado;
+    let badge = document.getElementById(`badge-att-${index}`);
+    badge.innerText = nuevoEstado.toUpperCase();
+    
+    badge.className = "status-badge";
+    if(nuevoEstado === 'Asistió') badge.classList.add('status-justified');
+    if(nuevoEstado === 'Tardanza') badge.classList.add('status-warning');
+    if(nuevoEstado === 'Ausencia') badge.classList.add('status-absent');
+    if(nuevoEstado === 'Pendiente') badge.style.backgroundColor = "#e2e8f0";
+
+    document.querySelectorAll(`#row-att-${index} .btn-att`).forEach(btn => btn.classList.remove('active-p', 'active-t', 'active-a'));
+    if(nuevoEstado === 'Asistió') document.getElementById(`btn-p-${index}`).classList.add('active-p');
+    if(nuevoEstado === 'Tardanza') document.getElementById(`btn-t-${index}`).classList.add('active-t');
+    if(nuevoEstado === 'Ausencia') document.getElementById(`btn-a-${index}`).classList.add('active-a');
+  }
+
+  function actualizarSemanaTareas() {
+    semanaSeleccionada = parseInt(document.getElementById("selector-semana").value);
+    const tbody = document.getElementById("tbody-tareas");
+    tbody.innerHTML = "";
+    
+    SEMANAS_TAREAS[semanaSeleccionada].forEach(t => {
+      tbody.innerHTML += `<tr><td><b>${t.fecha}</b></td><td>${t.materia}</td><td>${t.desc}</td></tr>`;
+    });
+  }
+
+  function loadModule(id) {
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    const activeBtn = document.getElementById('btn-' + id);
+    if(activeBtn) activeBtn.classList.add('active');
+
+    const main = document.getElementById('main-content');
+    let html = "";
+    const db = getDB();
+
+    const n1 = session.isNew ? "4.1" : "4.5";
+    const n2 = session.isNew ? "3.9" : "4.2";
+    const n3 = session.isNew ? "4.6" : "4.8";
+    const n4 = session.isNew ? "4.0" : "4.0";
+    const n5 = session.isNew ? "4.8" : "5.0";
+
+    switch(id) {
+      case 'notes_tracker':
+      case 'notes_tracker_admin':
+        html = `
+          <h2>Control de Calificaciones (Historial Trimestral)</h2>
+          <p style="margin-bottom: 20px; color: #64748b;">Estructura de registro unificada bajo la escala oficial de 1.0 a 5.0.</p>
+          
+          <h3>I Trimestre 2026 (Finalizado)</h3>
+          <div class="data-table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr><th>Asignatura</th><th>Ejercicios</th><th>Talleres</th><th>Tareas</th><th>Investigación</th><th>Promedio</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Cálculo Matemático</td><td>${n1}</td><td>${n2}</td><td>${n3}</td><td>4.2</td><td><b>4.3</b></td></tr>
+              <tr><td>Física Aplicada</td><td>3.8</td><td>${n4}</td><td>4.2</td><td>3.9</td><td><b>4.0</b></td></tr>
+              <tr><td>Programación Web III</td><td>${n5}</td><td>4.9</td><td>4.8</td><td>5.0</td><td><b>4.9</b></td></tr>
+            </tbody>
+          </table>
+          </div>
+
+          <h3>II Trimestre 2026 (En Curso)</h3>
+          <div class="data-table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr><th>Asignatura</th><th>Ejercicios</th><th>Talleres</th><th>Tareas</th><th>Investigación</th><th>Promedio</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Cálculo Matemático</td><td>4.0</td><td>4.2</td><td><input type="number" step="0.1" min="1" max="5" style="width:60px; padding:5px;" value="4.5"></td><td><input type="number" step="0.1" min="1" max="5" style="width:60px; padding:5px;"></td><td><b>4.2</b></td></tr>
+              <tr><td>Física Aplicada</td><td>3.9</td><td>4.1</td><td><input type="number" step="0.1" min="1" max="5" style="width:60px; padding:5px;"></td><td><input type="number" step="0.1" min="1" max="5" style="width:60px; padding:5px;"></td><td><b>4.0</b></td></tr>
+              <tr><td>Programación Web III</td><td>4.8</td><td>5.0</td><td><input type="number" step="0.1" min="1" max="5" style="width:60px; padding:5px;" value="4.9"></td><td><input type="number" step="0.1" min="1" max="5" style="width:60px; padding:5px;"></td><td><b>4.9</b></td></tr>
+            </tbody>
+          </table>
+          </div>
+          <button class="btn-submit" style="width: auto; padding: 12px 30px;" onclick="alert('Cambios y ponderaciones del II trimestre almacenadas en el LocalStorage.')">Sincronizar Periodo Actual</button>
+        `;
+        break;
+
+      case 'asistencia_view':
+        html = `
+          <h2>Módulo de Asistencia Automatizada</h2>
+          <p style="margin-bottom: 25px; color: #64748b;">Monitoreo interactivo en tiempo real del ciclo escolar 2026.</p>
+          
+          <div class="stat-box">
+            <div class="stat-item"><h4>Total Lecciones</h4><p>48 Horas</p></div>
+            <div class="stat-item"><h4>Asistidas</h4><p>${session.isNew ? "47":"48"} Horas</p></div>
+            <div class="stat-item"><h4>Porcentaje</h4><p style="color: var(--secondary);">${session.isNew ? "98%" : "100%"}</p></div>
+            <div class="stat-item"><h4>Penalizaciones</h4><p style="color: var(--accent);">${session.isNew ? "1":"0"}</p></div>
+          </div>
+
+          <h3>I Trimestre 2026 (Completado y Cerrado)</h3>
+          <div class="data-table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr><th>Rango Mensual</th><th>Estado General</th><th>Observación Técnica</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><b>Mes 1 (Marzo)</b></td><td><span class="status-badge status-justified">100% ASISTIDO</span></td><td>Asistencia Perfecta sin anomalías</td></tr>
+              <tr><td><b>Mes 2 (Abril)</b></td><td><span class="status-badge status-justified">100% ASISTIDO</span></td><td>Sin novedades reportadas</td></tr>
+              <tr><td><b>Mes 3 (Mayo)</b></td><td><span class="status-badge status-warning">95% ASISTIDO</span></td><td>1 Inasistencia Justificada archivada</td></tr>
+            </tbody>
+          </table>
+          </div>
+
+          <h3>II Trimestre 2026 (En Proceso - Haga clic para cambiar el estado por día)</h3>
+          <div class="data-table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr><th>Día / Fecha</th><th>Estado Actual</th><th>Acciones de Control Diario</th></tr>
+            </thead>
+            <tbody>
+              ${DIAS_ASISTENCIA.map((d, idx) => {
+                let badgeClass = "status-badge ";
+                if(d.estado === 'Asistió') badgeClass += "status-justified";
+                if(d.estado === 'Tardanza') badgeClass += "status-warning";
+                if(d.estado === 'Ausencia') badgeClass += "status-absent";
+                return `
+                  <tr id="row-att-${idx}">
+                    <td><b>${d.dia}</b></td>
+                    <td><span id="badge-att-${idx}" class="${badgeClass}">${d.estado.toUpperCase()}</span></td>
+                    <td>
+                      <button id="btn-p-${idx}" class="btn-att ${d.estado === 'Asistió' ? 'active-p':''}" onclick="cambiarAsistencia(${idx}, 'Asistió')">Asistió</button>
+                      <button id="btn-t-${idx}" class="btn-att ${d.estado === 'Tardanza' ? 'active-t':''}" onclick="cambiarAsistencia(${idx}, 'Tardanza')">Tardanza</button>
+                      <button id="btn-a-${idx}" class="btn-att ${d.estado === 'Ausencia' ? 'active-a':''}" onclick="cambiarAsistencia(${idx}, 'Ausencia')">Ausencia</button>
+                    </td>
+                  </tr>
+                `;
+              }).join('')}
+            </tbody>
+          </table>
+          </div>
+          <button class="btn-submit" style="width: auto; padding: 12px 30px;" onclick="alert('Control diario de asistencias del II trimestre sincronizado con éxito.')">Guardar Registro Diario</button>
+        `;
+        break;
+
+      case 'matricula':
+        const datosEstudiante = db.estudiantes.find(e => e.emailEstudiante === session.email || e.emailResponsable === session.email) || {
+            cedula: "", name: session.role === 'estudiante' ? session.name : "", direccion: "La Chorrera, Panamá Oeste", telefono: "", emailEstudiante: session.role === 'estudiante' ? session.email : "", emailResponsable: session.role === 'padre' ? session.email : ""
+        };
+        html = `
+          <h2>Formulario Completo de Matrícula 2026</h2>
+          <p style="margin-bottom: 20px; color: #64748b;">Complete los datos personales, académicos y médicos del estudiante para formalizar el expediente institucional.</p>
+          
+          <div class="form-container">
+            <div class="form-group-block"><label>Nombre Completo del Estudiante</label><input type="text" id="reg-name" value="${datosEstudiante.name}"></div>
+            <div class="form-group-block"><label>Cédula de Identidad / Pasaporte</label><input type="text" id="reg-cedula" value="${datosEstudiante.cedula}"></div>
+            <div class="form-group-block"><label>Fecha de Nacimiento</label><input type="date" id="reg-fecha-nac" value="${datosEstudiante.fechaNac || ''}"></div>
+            <div class="form-group-block">
+              <label>Tipo de Sangre</label>
+              <select id="reg-sangre">
+                <option value="O+" ${datosEstudiante.sangre === 'O+' ? 'selected':''}>O Positivo (O+)</option>
+                <option value="O-" ${datosEstudiante.sangre === 'O-' ? 'selected':''}>O Negativo (O-)</option>
+                <option value="A+" ${datosEstudiante.sangre === 'A+' ? 'selected':''}>A Positivo (A+)</option>
+                <option value="A-" ${datosEstudiante.sangre === 'A-' ? 'selected':''}>A Negativo (A-)</option>
+                <option value="B+" ${datosEstudiante.sangre === 'B+' ? 'selected':''}>B Positivo (B+)</option>
+                <option value="AB+" ${datosEstudiante.sangre === 'AB+' ? 'selected':''}>AB Positivo (AB+)</option>
+              </select>
+            </div>
+            
+            <div class="form-group-block" style="grid-column: span 2;"><label>Alergias o Condiciones Médicas Específicas</label><input type="text" id="reg-allergies" placeholder="Ej. Alergia a la penicilina, asma, ninguna..." value="${datosEstudiante.allergies || ''}"></div>
+            <div class="form-group-block"><label>Contacto de Emergencia (Nombre)</label><input type="text" id="reg-emergencia-nombre" placeholder="Ej. María Pérez"></div>
+            <div class="form-group-block"><label>Teléfono de Emergencia</label><input type="text" id="reg-emergencia-tel" placeholder="+507 XXXX-XXXX"></div>
+
+            <div class="form-group-block" style="grid-column: span 2;"><label>Dirección Exacta de Residencia</label><input type="text" id="reg-direccion" value="${datosEstudiante.direccion}"></div>
+            <div class="form-group-block"><label>Teléfono Celular</label><input type="text" id="reg-telefono" value="${datosEstudiante.telefono}"></div>
+            <div class="form-group-block"><label>Nivel / Grado Académico 2026</label>
+              <select id="reg-grado">
+                <option value="10">Décimo Grado (10°)</option>
+                <option value="11">Undécimo Grado (11°)</option>
+                <option value="12">Duodécimo Grado (12°)</option>
+              </select>
+            </div>
+            <div class="form-group-block"><label>Correo Electrónico del Estudiante</label><input type="text" id="reg-email-est" value="${datosEstudiante.emailEstudiante}"></div>
+            <div class="form-group-block"><label>Correo Acudiente / Responsable</label><input type="text" id="reg-email-pad" value="${datosEstudiante.emailResponsable}"></div>
+            
+            <button class="btn-submit full-row" onclick="ejecutarMatriculaSistema()">Finalizar Matrícula e Indexar Expediente</button>
+          </div>
+          <div id="contenedor-notificacion-matricula"></div>
+        `;
+        break;
+
+      case 'pago':
+        // Selector universal para asegurar que aparezcan todos los alumnos de la plataforma 
+        const todosLosAlumnos = db.estudiantes;
+        html = `
+          <h2>Pasarela de Pago Segura</h2>
+          <p style="margin-bottom: 20px; color: #64748b;">Inserte los datos de facturación y el método de pago electrónico correspondiente.</p>
+          
+          <div class="card-payment">
+            <h1>$60.00</h1>
+            <p>MENSUALIDAD ADMINISTRATIVA EN CURSO</p>
+            <span style="font-size:0.8rem; opacity:0.8;">Año Lectivo 2026 | Transacción Encriptada SSL</span>
+          </div>
+          
+          <div class="form-container">
+            <div class="form-group-block"><label>Nombre Completo del Titular</label><input type="text" id="pago-titular" value="${session.role === 'padre' ? session.name : ''}"></div>
+            <div class="form-group-block">
+              <label>Seleccionar Estudiante a Pagar</label>
+              <select id="pago-cedula-ref">
+                ${todosLosAlumnos.map(h => `<option value="${h.cedula}">${h.name} (Cédula: ${h.cedula})</option>`).join('')}
+              </select>
+            </div>
+            
+            <div class="form-group-block" style="grid-column: span 2;"><label>Número de Tarjeta de Crédito / Débito</label><input type="text" id="pago-tarjeta" placeholder="4000 1234 5678 9010" maxlength="19"></div>
+            <div class="form-group-block"><label>Fecha de Expiración</label><input type="text" id="pago-expira" placeholder="MM/AA" maxlength="5"></div>
+            <div class="form-group-block"><label>Código de Seguridad (CVV)</label><input type="password" id="pago-cvv" placeholder="123" maxlength="4"></div>
+            
+            <div class="form-group-block" style="grid-column: span 2;"><label>Dirección de Facturación (Billing Address)</label><input type="text" id="pago-billing" placeholder="Calle, Provincia, Ciudad"></div>
+            
+            <button class="btn-submit full-row" onclick="ejecutarPagoSistema()">Confirmar Transacción y Procesar Recibo</button>
+          </div>
+          <div id="contenedor-notificacion-pago"></div>
+        `;
+        break;
+
+      case 'tareas':
+        html = `
+          <h2>Actividades y Tareas de la Semana Completa</h2>
+          <p style="margin-bottom: 20px; color: #64748b;">Selecciona la semana de estudio correspondiente y haz clic en actualizar para visualizar las asignaciones estructuradas del plan curricular.</p>
+          
+          <div style="display: flex; gap: 15px; align-items: center; background: #f8fafc; padding: 15px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 20px;">
+            <div style="flex: 1;" class="form-group-block">
+              <label style="margin-bottom: 4px;">Seleccionar Semana Lectiva</label>
+              <select id="selector-semana" style="padding: 10px; border-radius: 8px; border: 1.5px solid var(--border); width: 100%;">
+                <option value="1" ${semanaSeleccionada === 1 ? 'selected':''}>Semana 1 (Actual en curso)</option>
+                <option value="2" ${semanaSeleccionada === 2 ? 'selected':''}>Semana 2 (Próximas entregas)</option>
+                <option value="3" ${semanaSeleccionada === 3 ? 'selected':''}>Semana 3 (Planificación avanzada)</option>
+              </select>
+            </div>
+            <button class="btn-submit" style="width: auto; padding: 12px 25px; margin-top: 14px;" onclick="actualizarSemanaTareas()">Actualizar por Semana</button>
+          </div>
+
+          <div class="data-table-wrapper">
+          <table class="data-table">
+            <thead><tr><th>Fecha de Entrega</th><th>Materia / Asignatura</th><th>Descripción Curricular y Criterios</th></tr></thead>
+            <tbody id="tbody-tareas">
+              ${SEMANAS_TAREAS[semanaSeleccionada].map(t => `
+                <tr><td><b>${t.fecha}</b></td><td>${t.materia}</td><td>${t.desc}</td></tr>
+              `).join('')}
+            </tbody>
+          </table>
+          </div>
+        `;
+        break;
+
+      case 'entrega_formato':
+        html = `
+          <h2>Módulo Completo de Envío y Entrega de Asignaciones</h2>
+          <p style="color: #64748b; margin-bottom: 20px;">Utiliza este formulario institucional validado para registrar los enlaces de tus tareas en la base de datos de EduBrillante.</p>
+          
+          <div class="form-container" style="background: #f8fafc; padding: 25px; border-radius: 20px; border: 1px solid var(--border);">
+            <div class="form-group-block">
+              <label>Seleccionar Asignación Pendiente</label>
+              <select id="envio-materia">
+                <option value="">-- Seleccione una asignación --</option>
+                ${db.tareas_formato.map((t, idx) => `<option value="${idx}">${t.materia} - ${t.titulo} (${t.tipo})</option>`).join('')}
+              </select>
+            </div>
+            
+            <div class="form-group-block">
+              <label>Modalidad de Trabajo / Modalidad</label>
+              <select id="envio-modalidad">
+                <option value="Individual">Trabajo Individual</option>
+                <option value="Grupal">Proyecto Grupal / Colaborativo</option>
+              </select>
+            </div>
+
+            <div class="form-group-block" style="grid-column: span 2;">
+              <label>URL Compartida (Google Drive / OneDrive / GitHub / Notion)</label>
+              <input type="url" id="envio-url" placeholder="https://ejemplo.drive.google.com/file/d/...">
+            </div>
+
+            <div class="form-group-block" style="grid-column: span 2;">
+              <label>Observaciones o Comentarios para el Evaluador</label>
+              <textarea id="envio-comentarios" rows="3" placeholder="Escribe aquí aclaraciones, integrantes del grupo o detalles técnicos si es necesario..." style="width:100%; padding:12px; border-radius:12px; border:1.5px solid var(--border); resize:vertical; font-family:inherit;"></textarea>
+            </div>
+
+            <button class="btn-submit full-row" onclick="if(document.getElementById('envio-materia').value === '' || document.getElementById('envio-url').value.trim() === '') { alert('Por favor rellene la asignación y agregue un enlace válido.'); } else { alert('¡Asignación completa guardada, enviada e indexada con éxito en el servidor institucional!'); document.getElementById('envio-url').value=''; document.getElementById('envio-comentarios').value=''; }">Subir y Registrar Entrega Institucional</button>
+          </div>
+        `;
+        break;
+
+      case 'verificar_registros':
+        html = `
+          <h2>Control de Alumnos Registrados</h2>
+          <div class="data-table-wrapper">
+            <table class="data-table">
+              <thead><tr><th>Cédula</th><th>Nombre</th><th>Dirección de Residencia</th><th>Estatus Pago</th></tr></thead>
+              <tbody>
+                ${db.estudiantes.map(e => `
+                  <tr>
+                    <td><b>${e.cedula}</b></td>
+                    <td>${e.name}</td>
+                    <td>${e.direccion || 'La Chorrera, Panamá Oeste'}</td>
+                    <td><span class="status-badge ${e.pagoRealizado ? 'status-justified' : 'status-absent'}">${e.pagoRealizado ? 'PAGADO':'PENDIENTE'}</span></td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        `;
+        break;
+    }
+    main.innerHTML = html;
+  }
+
+  function ejecutarMatriculaSistema() {
+    const name = document.getElementById("reg-name").value.trim();
+    const cedula = document.getElementById("reg-cedula").value.trim();
+    const dir = document.getElementById("reg-direccion").value.trim();
+    const tel = document.getElementById("reg-telefono").value.trim();
+    const emailEst = document.getElementById("reg-email-est").value.trim().toLowerCase();
+    const emailPad = document.getElementById("reg-email-pad").value.trim().toLowerCase();
+    
+    const fechaNac = document.getElementById("reg-fecha-nac").value;
+    const sangre = document.getElementById("reg-sangre").value;
+    const allergies = document.getElementById("reg-allergies").value.trim();
+    const emergenciaNombre = document.getElementById("reg-emergencia-nombre").value.trim();
+    const emergenciaTel = document.getElementById("reg-emergencia-tel").value.trim();
+    const grado = document.getElementById("reg-grado").value;
+
+    if(!name || !cedula) return alert("Por favor complete los campos obligatorios (Nombre y Cédula).");
+
+    let db = getDB();
+    db.estudiantes = db.estudiantes.filter(e => e.cedula !== cedula);
+    db.estudiantes.push({
+      cedula: cedula, 
+      name: name, 
+      direccion: dir, 
+      telefono: tel, 
+      emailEstudiante: emailEst, 
+      emailResponsable: emailPad, 
+      pagoRealizado: false, 
+      montoPago: "60.00",
+      fechaNac: fechaNac,
+      sangre: sangre,
+      allergies: allergies,
+      emergenciaNombre: emergenciaNombre,
+      emergenciaTel: emergenciaTel,
+      grado: grado
+    });
+    if(!db.usuarios.some(u => u.email === emailEst)) {
+      db.usuarios.push({ email: emailEst, role: "estudiante", name: name, isNew: false, avatar: '👦' });
+    }
+    saveDB(db);
+
+    document.getElementById("contenedor-notificacion-matricula").innerHTML = `
+      <div class="email-notification-box">
+        <h4>📨 Notificación de Envío Electrónico a (${emailPad})</h4>
+        <p>Matrícula confirmada para <b>${name}</b> (Grado: ${grado}°). Expediente médico e institucional indexado correctamente.</p>
+      </div>`;
+    alert("¡Matrícula Guardada con éxito en el sistema!");
+  }
+
+  function ejecutarPagoSistema() {
+    const titular = document.getElementById("pago-titular").value.trim();
+    const cedulaRef = document.getElementById("pago-cedula-ref").value.trim();
+    
+    const tarjeta = document.getElementById("pago-tarjeta").value.trim();
+    const expira = document.getElementById("pago-expira").value.trim();
+    const cvv = document.getElementById("pago-cvv").value.trim();
+    const billing = document.getElementById("pago-billing").value.trim();
+
+    if(!titular || !cedulaRef || !tarjeta || !cvv) {
+      return alert("Por favor, rellene los datos obligatorios de la tarjeta y referencia del alumno.");
+    }
+
+    let db = getDB();
+    let est = db.estudiantes.find(e => e.cedula === cedulaRef);
+    if(!est) return alert("No se encontró el alumno en los registros con esa cédula.");
+
+    est.pagoRealizado = true;
+    saveDB(db);
+
+    document.getElementById("contenedor-notificacion-pago").innerHTML = `
+      <div class="email-notification-box">
+        <h4>📨 Recibo de Pago Electrónico Enviado a (${est.emailResponsable || 'acudiente@mail.com'})</h4>
+        <p>Pago de mensualidad por <b>$60.00</b> aplicado exitosamente a la cédula ${cedulaRef} correspondiente al estudiante <b>${est.name}</b>.</p>
+        <p style="font-size: 0.8rem; color: #64748b; margin-top: 5px;">Facturado a nombre de: ${titular} | Dirección de cobro: ${billing || 'No especificada'}</p>
+      </div>`;
+    alert("¡Transacción Bancaria Exitosa! Su recibo digital ha sido generado.");
+  }
+</script>
+</body>
+</html>
